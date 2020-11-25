@@ -1,0 +1,167 @@
+package Vista;
+
+import com.mysql.jdbc.Connection;
+import java.awt.HeadlessException;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import javax.swing.JOptionPane;
+
+public class RegistroAdmins extends javax.swing.JFrame {
+  PreparedStatement ps;
+    ResultSet rs;
+
+    public static Connection getConection() {
+        Connection con = null;
+        String URL = "jdbc:mysql://localhost:3306/moason?useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+        String USERNAME = "root";
+        String PASSWORD = "Contingencia2532";
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = (Connection) DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println(e);
+        }
+        return con;
+    }
+    public RegistroAdmins() {
+        initComponents();
+
+    }
+
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        btnAceptar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        lblADMPASS = new javax.swing.JLabel();
+        txtADMPASS = new javax.swing.JPasswordField();
+        txtUsuario = new javax.swing.JTextField();
+        lblUsuario1 = new javax.swing.JLabel();
+        lblContra1 = new javax.swing.JLabel();
+        txtContra = new javax.swing.JPasswordField();
+        lblAyu2 = new javax.swing.JLabel();
+        lblAyu1 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Registrarse - ADM");
+        setResizable(false);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnAceptar.setText("Aceptar");
+        btnAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAceptarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnAceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 80, -1));
+
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 100, 90, -1));
+
+        lblADMPASS.setText("ADM PASS");
+        getContentPane().add(lblADMPASS, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
+        getContentPane().add(txtADMPASS, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 70, 120, -1));
+        getContentPane().add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, 120, -1));
+
+        lblUsuario1.setText("Usuario");
+        getContentPane().add(lblUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+
+        lblContra1.setText("Contraseña");
+        getContentPane().add(lblContra1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
+        getContentPane().add(txtContra, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 120, -1));
+
+        lblAyu2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        lblAyu2.setForeground(new java.awt.Color(255, 51, 51));
+        lblAyu2.setText("por el Administrador a cargo.");
+        getContentPane().add(lblAyu2, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 140, -1, -1));
+
+        lblAyu1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        lblAyu1.setForeground(new java.awt.Color(255, 51, 51));
+        lblAyu1.setText("*El ADM PASS debería ser proporcionado ");
+        getContentPane().add(lblAyu1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, -1, -1));
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        Login login = new Login();
+        login.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
+        Connection con;
+        if (txtADMPASS.getPassword().length == 0 || txtContra.getPassword().length == 0 || txtUsuario.getText().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Por favor, llene todos los datos");
+        } else if (txtUsuario.getText().length() < 4) {
+            JOptionPane.showMessageDialog(null, "El usuario debe tener como mínimo 4 letras");
+        } else if (txtContra.getPassword().length < 4) {
+            JOptionPane.showMessageDialog(null, "La contraseña debe tener como mínimo 4 letras");
+        } else if (!(Arrays.equals(("asteroide".toCharArray()), txtADMPASS.getPassword()))) {
+            JOptionPane.showMessageDialog(null, "ADM PASS Incorrecto\nSi no lo tiene, solicitelo al administrador a cargo.\n");
+        } else {
+            try {
+                con = getConection();
+                ps = con.prepareStatement("INSERT INTO usuario (usuario_usuario,usuario_contra,usuario_privilegio) VALUES (?,?,?)");
+                ps.setString(1, txtUsuario.getText());
+                String valorPass = new String(txtContra.getPassword());
+                ps.setString(2, valorPass);
+                ps.setString(3, "administrador");
+                int res = ps.executeUpdate();
+                if (res > 0) {
+                    JOptionPane.showMessageDialog(null, "Registro exitoso");
+                    Login login = new Login();
+                    login.setVisible(true);
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error al guardar");
+                }
+                con.close();
+            } catch (HeadlessException | SQLException e) {
+                System.err.println(e);
+            }
+        }
+    }//GEN-LAST:event_btnAceptarActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Windows".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(RegistroAdmins.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        java.awt.EventQueue.invokeLater(() -> {
+            new RegistroAdmins().setVisible(true);
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAceptar;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JLabel lblADMPASS;
+    private javax.swing.JLabel lblAyu1;
+    private javax.swing.JLabel lblAyu2;
+    private javax.swing.JLabel lblContra1;
+    private javax.swing.JLabel lblUsuario1;
+    private javax.swing.JPasswordField txtADMPASS;
+    private javax.swing.JPasswordField txtContra;
+    private javax.swing.JTextField txtUsuario;
+    // End of variables declaration//GEN-END:variables
+}
